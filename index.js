@@ -3,8 +3,7 @@ const github = require('@actions/github');
 
 const run = async () => {
   // Auth
-  const token = core.getInput('GITHUB_TOKEN');
-  const octokit = github.getOctokit(token);
+  const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
   // Get project context
   const repo = github.context.payload.repository.name;
   const owner = github.context.payload.repository.owner.login;
