@@ -7,7 +7,7 @@ const run = async () => {
   const owner = process.env.GITHUB_REPOSITORY_OWNER;
   const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
   // Get list of collaborators/teams on repository
-  const collab = await octokit.repos.listCollaborators({
+  const collab = await octokit.rest.repos.listCollaborators({
     owner,
     repo
   });
