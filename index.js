@@ -1,9 +1,9 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 
-const octokit = new github.getOctokit({
-  auth: process.env.GITHUB_TOKEN
-});
+const octokit = github.getOctokit(
+  process.env.GITHUB_TOKEN
+);
 
 const collaborators = async (owner, repo) => {
   let list = await octokit.rest.repos.listCollaborators({
