@@ -1,20 +1,15 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 
-const repoName = (repo) => {
-  data = repo.split("/");
-  return data.at(-1);
-}
-
 const run = async () => {
   // Establish constants
-  const repo = repoName(process.env.GITHUB_REPOSITORY);
+  const repo = github.context.payload.repository.owner.login
   const owner = process.env.GITHUB_REPOSITORY_OWNER;
-  const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+  const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
   // Get list of collaborators/teams on repository
-  const collabs = octokit.request(`GET /repos/${owner}/${repo}/collaborators`, {
-    owner: owner,
-    repo: repo
+  const collab = await octokit.repos.listCollaborators({
+    owner,
+    repo
   });
   console.log(collabs);
   // Update branch protection
