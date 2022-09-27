@@ -9669,10 +9669,12 @@ const core = __nccwpck_require__(348);
 const github = __nccwpck_require__(9161);
 
 const run = async () => {
-  // Establish constants
+  // Auth
+  const token = core.getInput('GITHUB_TOKEN');
+  const octokit = github.getOctokit(token);
+  // Get project context
   const repo = github.context.payload.repository.name;
   const owner = github.context.payload.repository.owner.login;
-  const octokit = github.getOctokit(GITHUB_TOKEN);
   // Get list of collaborators/teams on repository
   const collabs = await octokit.rest.repos.listCollaborators({
     owner,
