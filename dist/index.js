@@ -9671,10 +9671,10 @@ const github = __nccwpck_require__(9161);
 const run = async () => {
   // Establish constants
   const repo = github.context.payload.repository.name;
-  const owner = process.env.GITHUB_REPOSITORY_OWNER;
-  const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
+  const owner = github.context.payload.repository.owner.login;
+  const octokit = github.getOctokit(GITHUB_TOKEN);
   // Get list of collaborators/teams on repository
-  const collab = await octokit.rest.repos.listCollaborators({
+  const collabs = await octokit.rest.repos.listCollaborators({
     owner,
     repo
   });
