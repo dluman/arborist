@@ -9668,7 +9668,7 @@ var __webpack_exports__ = {};
 const core = __nccwpck_require__(348);
 const github = __nccwpck_require__(9161);
 
-const octokit = new Octokit({
+const octokit = new github.getOctokit({
   auth: process.env.GITHUB_TOKEN
 });
 
