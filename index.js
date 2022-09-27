@@ -12,9 +12,9 @@ const run = async () => {
   const owner = process.env.GITHUB_REPOSITORY_OWNER;
   const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
   // Get list of collaborators/teams on repository
-  const collabs = octokit.request(`GET /repos/${owner}/${repo}/collaborators', {
-    owner: ${owner},
-    repo: ${repo}
+  const collabs = octokit.request(`GET /repos/${owner}/${repo}/collaborators`, {
+    owner: owner,
+    repo: repo
   });
   console.log(collabs);
   // Update branch protection
