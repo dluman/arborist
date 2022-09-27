@@ -9668,19 +9668,23 @@ var __webpack_exports__ = {};
 const core = __nccwpck_require__(348);
 const github = __nccwpck_require__(9161);
 
+const octokit = new Octokit({
+  auth: process.env.GITHUB_TOKEN
+});
+
+const collaborators = async (owner, repo) => {
+  let list = await octokit.rest.repos.listCollaborators({
+    owner: owner,
+    repo: repo
+  });
+  return list;
+}
+
 const run = async () => {
-  // Auth
-  const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
   // Get project context
   const repo = github.context.payload.repository.name;
   const owner = github.context.payload.repository.owner.login;
-  // Get list of collaborators/teams on repository
-  const collabs = await octokit.rest.repos.listCollaborators({
-    owner,
-    repo
-  });
-  console.log(collabs);
-  // Update branch protection
+  console.log(collaborators(owner, repo));
 };
 
 run();
