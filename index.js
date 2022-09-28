@@ -6,7 +6,7 @@ const octokit = github.getOctokit(
 );
 
 const collaborators = async (owner, repo) => {
-  let list = await octokit.rest.repos.listCollaborators({
+  let list = await octokit.rest.repos.listContributors({
     owner: owner,
     repo: repo
   });
