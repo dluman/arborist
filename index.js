@@ -10,14 +10,14 @@ const collaborators = async (owner, repo) => {
     owner: owner,
     repo: repo
   });
-  return list;
+  console.log(list);
 }
 
 const run = async () => {
   // Get project context
   const repo = github.context.payload.repository.name;
   const owner = github.context.payload.repository.owner.login;
-  console.log(collaborators(owner, repo));
+  collaborators(owner, repo);
 };
 
 run();

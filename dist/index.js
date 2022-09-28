@@ -9668,9 +9668,9 @@ var __webpack_exports__ = {};
 const core = __nccwpck_require__(348);
 const github = __nccwpck_require__(9161);
 
-const octokit = new github.getOctokit({
-  auth: process.env.GITHUB_TOKEN
-});
+const octokit = github.getOctokit(
+  process.env.GITHUB_TOKEN
+);
 
 const collaborators = async (owner, repo) => {
   let list = await octokit.rest.repos.listCollaborators({
