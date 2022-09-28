@@ -9673,18 +9673,18 @@ const octokit = github.getOctokit(
 );
 
 const collaborators = async (owner, repo) => {
-  let list = await octokit.rest.repos.listCollaborators({
+  let list = await octokit.rest.repos.listContributors({
     owner: owner,
     repo: repo
   });
-  console.log(list);
+  return list;
 }
 
 const run = async () => {
   // Get project context
   const repo = github.context.payload.repository.name;
   const owner = github.context.payload.repository.owner.login;
-  collaborators(owner, repo);
+  console.log(await collaborators(owner, repo));
 };
 
 run();
