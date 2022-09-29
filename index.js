@@ -20,10 +20,10 @@ const teams = async (org) => {
   return await teams;
 };
 
-const getTeam = async (org, team) => {
+const getTeam = async (owner, name) => {
   let team = octokit.rest.teams.getByName({
     owner,
-    team
+    name
   });
   return await team;
 };
