@@ -20,5 +20,5 @@ jobs:
           git config --local user.name "dluman"
           git config --local user.email "dluman@allegheny.edu"
           git add -A && git commit -m "Building distribution" && git push origin main
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
