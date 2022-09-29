@@ -9681,10 +9681,10 @@ const contributors = async (owner, repo) => {
 };
 
 const teams = async (org) => {
-  let teams = await octokit.rest.teams.list({
+  let list = await octokit.rest.teams.list({
     org
   });
-  return await teams;
+  return await list;
 };
 
 const getTeam = async (owner, name) => {
