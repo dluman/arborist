@@ -2,4 +2,4 @@ name: 'Arborist'
 description: 'Branch protection and reconstruction for GitHub Classroom assignments'
 runs:
   using: 'node16'
-  main: 'index.js'
+  main: 'dist/index.js'
