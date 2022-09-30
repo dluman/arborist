@@ -9696,7 +9696,6 @@ const getTeam = async (owner, name) => {
 };
 
 const run = async () => {
-  // Get project context
   const repo = github.context.payload.repository.name;
   const owner = github.context.payload.repository.owner.login;
   const orgteams = teams(owner);
