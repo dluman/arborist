@@ -9695,26 +9695,19 @@ const contributors = async (owner, repo) => {
   return list;
 };
 
-const teams = async (org) => {
-  let list = await octokit.rest.teams.list({
-    org
+const teamnames = async (owner, repo) => {
+  let list = await octokit.rest.repos.listTeams({
+    owner: owner,
+    repo: repo
   });
   return list;
-};
-
-const getTeam = async (owner, name) => {
-  let team = await octokit.rest.teams.getByName({
-    owner,
-    name
-  });
-  return team;
 };
 
 const run = async () => {
   const repo = github.context.payload.repository.name;
   const owner = github.context.payload.repository.owner.login;
-  const orgteams = await teams(owner);
-  console.log(orgteams)
+  const teams = await teamnames(owner, repo);
+  console.log(teams);
 };
 
 run();
