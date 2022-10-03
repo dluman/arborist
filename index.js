@@ -21,7 +21,7 @@ const teams = async (org) => {
 };
 
 const getTeam = async (owner, name) => {
-  let team = octokit.rest.teams.getByName({
+  let team = await octokit.rest.teams.getByName({
     owner,
     name
   });
@@ -32,7 +32,6 @@ const run = async () => {
   const repo = github.context.payload.repository.name;
   const owner = github.context.payload.repository.owner.login;
   const orgteams = teams(owner);
-  console.log(orgteams)
   /*for(let team of orgteams) {
     console.log(team);
     console.log(getTeam(owner, teams));
