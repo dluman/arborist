@@ -9692,14 +9692,14 @@ const contributors = async (owner, repo) => {
     owner: owner,
     repo: repo
   });
-  return await list;
+  return list;
 };
 
 const teams = async (org) => {
   let list = await octokit.rest.teams.list({
     org
   });
-  return await list;
+  return list;
 };
 
 const getTeam = async (owner, name) => {
@@ -9707,14 +9707,13 @@ const getTeam = async (owner, name) => {
     owner,
     name
   });
-  return await team;
+  return team;
 };
 
 const run = async () => {
   const repo = github.context.payload.repository.name;
   const owner = github.context.payload.repository.owner.login;
-  const orgteams = teams(owner);
-  console.log(orgteams);
+  const orgteams = await teams(owner);
 };
 
 run();
