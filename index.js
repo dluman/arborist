@@ -32,10 +32,10 @@ const run = async () => {
   const repo = github.context.payload.repository.name;
   const owner = github.context.payload.repository.owner.login;
   const orgteams = teams(owner);
-  /*for(let team of orgteams) {
+  for(let team of orgteams) {
     console.log(team);
     console.log(getTeam(owner, teams));
-  }*/
+  }
 };
 
 run();
