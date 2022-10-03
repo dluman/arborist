@@ -9714,6 +9714,7 @@ const run = async () => {
   const repo = github.context.payload.repository.name;
   const owner = github.context.payload.repository.owner.login;
   const orgteams = await teams(owner);
+  console.log(orgteams)
 };
 
 run();
