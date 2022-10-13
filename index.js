@@ -20,6 +20,11 @@ const getTeamNames = async (owner, repo) => {
     owner: owner,
     repo: repo
   });
+  let teams = Object
+    .keys(list)
+    .filter(team, idx, self) => {
+      return team.parent == "students";
+    });
   return list;
 };
 
@@ -29,11 +34,11 @@ const getRepoInfo = async (owner, repo) => {
     repo: repo
   });
   return info;
-}
+};
 
 const getRepoTemplate = async (info) => {
-  return info.template_repository.git_url;
-}
+  return info.template_repository.clone_url;
+};
 
 // Set
 
@@ -48,7 +53,6 @@ const run = async () => {
   // Properties
   const info = await getRepoInfo(owner, repo);
   const teams = await getTeamNames(owner, repo);
-  console.log(teams);
   // Facts
   const template = getRepoTemplate(info);
 };
