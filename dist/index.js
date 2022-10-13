@@ -9687,7 +9687,9 @@ const octokit = github.getOctokit(
   process.env.GITHUB_TOKEN
 );
 
-const contributors = async (owner, repo) => {
+// Get
+
+const getContributors = async (owner, repo) => {
   let list = await octokit.rest.repos.listContributors({
     owner: owner,
     repo: repo
@@ -9695,7 +9697,7 @@ const contributors = async (owner, repo) => {
   return list;
 };
 
-const teamnames = async (owner, repo) => {
+const getTeamNames = async (owner, repo) => {
   let list = await octokit.rest.repos.listTeams({
     owner: owner,
     repo: repo
@@ -9711,14 +9713,26 @@ const getRepoInfo = async (owner, repo) => {
   return info;
 }
 
+const getRepoTemplate = async (info) => {
+  return info.template_repository.git_url;
+}
+
+// Set
+
+const setBranchProtection = async (owner, repo) => {
+
+}
+
 const run = async () => {
   // Constants
   const repo = github.context.payload.repository.name;
   const owner = github.context.payload.repository.owner.login;
   // Properties
   const info = await getRepoInfo(owner, repo);
-  const teams = await teamnames(owner, repo);
-  console.log(info);
+  const teams = await getTeamNames(owner, repo);
+  console.log(teams);
+  // Facts
+  const template = getRepoTemplate(info);
 };
 
 run();
