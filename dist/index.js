@@ -9703,15 +9703,25 @@ const teamnames = async (owner, repo) => {
   return list;
 };
 
+const getRepoInfo = async (owner, repo) => {
+  let info = octokit.rest.repos.get({
+    owner: owner,
+    repo: repo
+  });
+  return info;
+}
+
 const run = async () => {
+  // Constants
   const repo = github.context.payload.repository.name;
   const owner = github.context.payload.repository.owner.login;
+  // Properties
+  const info = await getRepoInfo(owner, repo);
   const teams = await teamnames(owner, repo);
-  console.log(teams);
+  console.log(info);
 };
 
 run();
-
 
 })();
 
