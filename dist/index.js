@@ -9702,6 +9702,7 @@ const getTeamNames = async (owner, repo) => {
     owner: owner,
     repo: repo
   });
+  console.log(list);
   let slugs = Object
     .values(list)
     .map((team, idx, self) => {
@@ -9719,6 +9720,7 @@ const getRepoInfo = async (owner, repo) => {
 };
 
 const getRepoTemplate = async (info) => {
+  console.log(info);
   if (info.template_repository.clone_url) {
     return info.template_repository.clone_url;
   }
@@ -9728,7 +9730,7 @@ const getRepoTemplate = async (info) => {
 // Set
 
 const setBranchProtection = async (owner, repo, teams) => {
-  console.log(teams);
+  //console.log(teams);
 }
 
 const run = async () => {
