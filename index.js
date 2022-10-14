@@ -20,12 +20,12 @@ const getTeamNames = async (owner, repo) => {
     owner: owner,
     repo: repo
   });
-  let teams = Object
-    .keys(list)
-    .filter(team, idx, self) => {
-      return team.parent == "students";
+  let slugs = Object
+    .values(list)
+    .map((team, idx, self) => {
+      return team.slug
     });
-  return list;
+  return slugs;
 };
 
 const getRepoInfo = async (owner, repo) => {
@@ -42,8 +42,8 @@ const getRepoTemplate = async (info) => {
 
 // Set
 
-const setBranchProtection = async (owner, repo) => {
-
+const setBranchProtection = async (owner, repo, teams) => {
+  console.log(teams);
 }
 
 const run = async () => {
@@ -55,6 +55,8 @@ const run = async () => {
   const teams = await getTeamNames(owner, repo);
   // Facts
   const template = getRepoTemplate(info);
+  // Set protections
+  setBranchProtection(owner, repo, teams);
 };
 
 run();
