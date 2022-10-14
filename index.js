@@ -25,7 +25,6 @@ const getTeamNames = async (owner, repo) => {
       .map(async (team, idx, self) => {
         return team.slug
     });
-  console.log(slugs);
   return slugs;
 };
 
@@ -57,6 +56,7 @@ const run = async () => {
   // Properties
   const info = await getRepoInfo(owner, repo);
   const teams = await getTeamNames(owner, repo);
+  console.log(teams);
   // Facts
   const template = getRepoTemplate(info);
   // Set protections
