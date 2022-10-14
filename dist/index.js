@@ -9702,12 +9702,12 @@ const getTeamNames = async (owner, repo) => {
     owner: owner,
     repo: repo
   });
-  console.log(list);
-  let slugs = Object
-    .values(list)
-    .map((team, idx, self) => {
-      return team.slug
+  let slugs = await Object
+      .values(list)
+      .map(async (team, idx, self) => {
+        return team.slug
     });
+  console.log(slugs);
   return slugs;
 };
 
@@ -9720,8 +9720,7 @@ const getRepoInfo = async (owner, repo) => {
 };
 
 const getRepoTemplate = async (info) => {
-  console.log(info);
-  if (info.template_repository.clone_url) {
+  if (info.template_repository) {
     return info.template_repository.clone_url;
   }
   return undefined;
