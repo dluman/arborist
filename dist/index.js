@@ -9702,7 +9702,12 @@ const getTeamNames = async (owner, repo) => {
     owner: owner,
     repo: repo
   });
-  return list;
+  let slugs = Object
+    .values(list)
+    .map((team, idx, self) => {
+      return team.slug
+    });
+  return slugs;
 };
 
 const getRepoInfo = async (owner, repo) => {
@@ -9711,16 +9716,16 @@ const getRepoInfo = async (owner, repo) => {
     repo: repo
   });
   return info;
-}
+};
 
 const getRepoTemplate = async (info) => {
-  return info.template_repository.git_url;
-}
+  return info.template_repository.clone_url;
+};
 
 // Set
 
-const setBranchProtection = async (owner, repo) => {
-
+const setBranchProtection = async (owner, repo, teams) => {
+  console.log(teams);
 }
 
 const run = async () => {
@@ -9730,9 +9735,10 @@ const run = async () => {
   // Properties
   const info = await getRepoInfo(owner, repo);
   const teams = await getTeamNames(owner, repo);
-  console.log(teams);
   // Facts
   const template = getRepoTemplate(info);
+  // Set protections
+  setBranchProtection(owner, repo, teams);
 };
 
 run();
