@@ -23,7 +23,7 @@ const getTeamNames = async (owner, repo) => {
   let slugs = await Object
       .values(list)
       .map(async (team, idx, self) => {
-        return team.slug
+        return await team.slug
     });
   return slugs;
 };
