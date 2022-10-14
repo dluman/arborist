@@ -37,7 +37,10 @@ const getRepoInfo = async (owner, repo) => {
 };
 
 const getRepoTemplate = async (info) => {
-  return info.template_repository.clone_url;
+  if (info.template_repository.clone_url) {
+    return info.template_repository.clone_url;
+  }
+  return undefined;
 };
 
 // Set
