@@ -23,8 +23,8 @@ const getTeamNames = async (owner, repo) => {
     repo: repo
   });
   let values = Object.values(list)
-  let slugs = async.map(values[0], (value, fn) => {
-    console.log(value);
+  let slugs = async.map(values, (value, fn) => {
+    console.log(value.slug);
     return value.slug;
   }, (err, res) => {
     //if (err) console.log(err);
