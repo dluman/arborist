@@ -15765,20 +15765,19 @@ const getContributors = async (owner, repo) => {
 
 
 const getTeamNames = async (owner, repo) => {
+  let slugs = [];
   let list = await octokit.rest.repos.listTeams({
     owner: owner,
     repo: repo
   });
   let teams = list.data;
-  teams = async.map(teams, (value, fn) => {
-    console.log(value);
-    if (value.parent) value = value.parent
+  async.map(teams, (value, fn) => {
     fn(null, value.slug);
   }, (err, res) => {
-    return res;
+    slugs.push(res);
   });
-  console.log(teams);
-  return teams;
+  console.log(slugs);
+  return slugs;
 };
 
 const getRepoInfo = async (owner, repo) => {
