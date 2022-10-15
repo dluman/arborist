@@ -15819,7 +15819,8 @@ const setTeamRepoPermissions = async (owner, repo, teams) => {
       org: owner,
       team_slug: teams[team],
       owner: owner,
-      repo: repo
+      repo: repo,
+      permission: 'push'
     });
   }
 }
