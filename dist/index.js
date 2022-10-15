@@ -15775,7 +15775,7 @@ const getTeamNames = async (owner, repo) => {
     fn(null, value.slug);
   }, (err, res) => {
     for(let item in res){
-      slugs.push(item);
+      slugs.push(res[item]);
     }
   });
   return slugs;
