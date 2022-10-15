@@ -15803,12 +15803,14 @@ const setBranchProtection = async (owner, repo, teams) => {
     owner: owner,
     repo: repo,
     branch: 'main',
-    restrictions: {
-      teams: teams
+    required_status_checks: {
+      strict: false,
     },
-    enforce_admins: false,
-    required_pull_request_reviews: 3,
-    required_status_checks: null
+    enforce_admins: true,
+    restrictions: {
+      teams: teams,
+    },
+    required_approving_review_count: 3,
   });
 }
 
