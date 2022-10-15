@@ -52,7 +52,7 @@ const getRepoTemplate = async (info) => {
 // Set
 
 const setBranchProtection = async (owner, repo, teams) => {
-  //console.log(teams);
+  console.log(teams);
 }
 
 const run = async () => {
@@ -62,7 +62,6 @@ const run = async () => {
   // Properties
   const info = await getRepoInfo(owner, repo);
   const teams = await getTeamNames(owner, repo);
-  console.log(teams);
   // Facts
   const template = getRepoTemplate(info);
   // Set protections
