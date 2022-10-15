@@ -28,6 +28,7 @@ const getTeamNames = async (owner, repo) => {
   }, (err, res) => {
     //if (err) console.log(err);
   });
+  console.log(slugs);
   return slugs;
 };
 
