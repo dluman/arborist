@@ -15769,7 +15769,8 @@ const getTeamNames = async (owner, repo) => {
     owner: owner,
     repo: repo
   });
-  let slugs = async.map(list.data, (value, fn) => {
+  let teams = list.data;
+  async.map(teams, (value, fn) => {
     if (value.parent) value = value.parent
     console.log("VALUE");
     console.log(value);
@@ -15778,8 +15779,8 @@ const getTeamNames = async (owner, repo) => {
   }, (err, res) => {
     //if (err) console.log(err);
   });
-  console.log(slugs);
-  return slugs;
+  console.log(teams);
+  return teams;
 };
 
 const getRepoInfo = async (owner, repo) => {
