@@ -1,4 +1,4 @@
-# The Arborist!
+# The Arborist
 
 The automated GitHub branch protector!
 
