@@ -52,7 +52,13 @@ const getRepoTemplate = async (info) => {
 // Set
 
 const setBranchProtection = async (owner, repo, teams) => {
-  console.log(teams);
+  octokit.rest.repos.updateBranchProtection({
+    owner: owner,
+    repo: repo,
+    restrictions: {
+      teams: teams
+    }
+  });
 }
 
 const run = async () => {
