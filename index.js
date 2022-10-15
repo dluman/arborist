@@ -23,7 +23,7 @@ const getTeamNames = async (owner, repo) => {
     repo: repo
   });
   let teams = list.data;
-  async.map(teams, (value, fn) => {
+  teams = async.map(teams, (value, fn) => {
     console.log(value);
     if (value.parent) value = value.parent
     fn(null, value.slug);
