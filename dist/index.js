@@ -9503,6 +9503,14 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
+/***/ 9525:
+/***/ ((module) => {
+
+module.exports = eval("require")("async");
+
+
+/***/ }),
+
 /***/ 6790:
 /***/ ((module) => {
 
@@ -9681,6 +9689,7 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
 const core = __nccwpck_require__(348);
+const async = __nccwpck_require__(9525);
 const github = __nccwpck_require__(9161);
 
 const octokit = github.getOctokit(
@@ -9697,16 +9706,18 @@ const getContributors = async (owner, repo) => {
   return list;
 };
 
+
 const getTeamNames = async (owner, repo) => {
   let list = await octokit.rest.repos.listTeams({
     owner: owner,
     repo: repo
   });
-  let slugs = Object
-        .values(list)
-        .map((team, idx, self) => {
-          return team.slug
-      });
+  let values = Object.values(list)
+  let slugs = async.map(values, (value, fn) => {
+    return value.slug;
+  }, (err, res) => {
+    console.log(res);
+  });
   return slugs;
 };
 

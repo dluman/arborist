@@ -1,4 +1,5 @@
 const core = require('@actions/core');
+const async = require('async');
 const github = require('@actions/github');
 
 const octokit = github.getOctokit(
@@ -15,16 +16,18 @@ const getContributors = async (owner, repo) => {
   return list;
 };
 
+
 const getTeamNames = async (owner, repo) => {
   let list = await octokit.rest.repos.listTeams({
     owner: owner,
     repo: repo
   });
-  let slugs = Object
-        .values(list)
-        .map((team, idx, self) => {
-          return team.slug
-      });
+  let values = Object.values(list)
+  let slugs = async.map(values, (value, fn) => {
+    return value.slug;
+  }, (err, res) => {
+    console.log(res);
+  });
   return slugs;
 };
 
