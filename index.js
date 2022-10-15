@@ -66,6 +66,17 @@ const setBranchProtection = async (owner, repo, teams) => {
   });
 }
 
+const setTeamRepoPermissions = async (owner, repo, teams) => {
+  for(let team in teams){
+    octokit.rest.teams.addOrUpdateRepoPermissionsInOrg({
+      org: owner,
+      team_slug: team,
+      owner: owner,
+      repo: repo
+    });
+  }
+}
+
 const run = async () => {
   // Constants
   const repo = github.context.payload.repository.name;
@@ -77,6 +88,7 @@ const run = async () => {
   const template = getRepoTemplate(info);
   // Set protections
   setBranchProtection(owner, repo, teams);
+  setTeamRepoPermissions(owner, repo, teams);
 };
 
 run();
