@@ -70,7 +70,7 @@ const setTeamRepoPermissions = async (owner, repo, teams) => {
   for(let team in teams){
     octokit.rest.teams.addOrUpdateRepoPermissionsInOrg({
       org: owner,
-      team_slug: team,
+      team_slug: teams[team],
       owner: owner,
       repo: repo
     });
