@@ -15802,7 +15802,7 @@ const setBranchProtection = async (owner, repo, teams) => {
   octokit.rest.repos.updateBranchProtection({
     owner: owner,
     repo: repo,
-    branch: main,
+    branch: 'main',
     restrictions: {
       teams: teams
     }
