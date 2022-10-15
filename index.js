@@ -20,12 +20,14 @@ const getTeamNames = async (owner, repo) => {
     owner: owner,
     repo: repo
   });
-  let slugs = await Object
-      .values(list)
-      .map(async (team, idx, self) => {
-        return await team.slug
-    });
-  return slugs;
+  let slugs = await Promise.all(
+      Object
+        .values(list)
+        .map(async (team, idx, self) => {
+          return await team.slug
+      });
+  );
+  return await slugs;
 };
 
 const getRepoInfo = async (owner, repo) => {
