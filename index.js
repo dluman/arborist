@@ -24,10 +24,11 @@ const getTeamNames = async (owner, repo) => {
   });
   let teams = list.data;
   async.map(teams, (value, fn) => {
+    console.log(value);
     if (value.parent) value = value.parent
     fn(null, value.slug);
   }, (err, res) => {
-    if (res) console.log(res);
+    return res;
   });
   console.log(teams);
   return teams;
