@@ -15808,9 +15808,9 @@ const setBranchProtection = async (owner, repo, teams) => {
     restrictions: null,
     required_pull_request_reviews: {
       teams: teams,
+      required_approving_review_count: 3,
+      dismiss_stale_reviews: true
     },
-    dismiss_stale_reviews: true,
-    required_approving_review_count: 2,
   });
 }
 
