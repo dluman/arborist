@@ -49,6 +49,7 @@ const getRepoTemplate = async (info) => {
       owner: template.owner.login,
       repo: template.name
     }
+    console.log(templateInfo);
     return templateInfo;
   }
   return undefined;
