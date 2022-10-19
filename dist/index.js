@@ -15859,7 +15859,7 @@ const cloneBranches = async (template) => {
     stdio: [0, 1, 2],
     cwd: path.resolve(__dirname, '')
   });
-  console.log(`Cloned ${template}`); 
+  console.log(`Cloned ${template.owner}/${template.repo} from ${template.clone}`); 
 }
 
 const run = async () => {
