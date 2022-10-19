@@ -45,6 +45,7 @@ const getRepoInfo = async (owner, repo) => {
 const getRepoTemplate = async (info) => {
   if (info.template_repository) {
     let template = info.template_repository;
+    console.log(template);
     return {
       owner: template.owner.login,
       repo: template.name
