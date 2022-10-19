@@ -15791,6 +15791,7 @@ const getRepoInfo = async (owner, repo) => {
 
 const getRepoTemplate = async (info) => {
   if (info.template_repository) {
+    console.log(info.template_repository);
     return info.template_repository.clone_url;
   }
   return undefined;
@@ -15825,18 +15826,34 @@ const setTeamRepoPermissions = async (owner, repo, teams) => {
   }
 }
 
+const fetchBranches = async (owner, repo) => {
+
+}
+
+const cloneBranches = async (template) => {
+
+}
+
 const run = async () => {
+
   // Constants
   const repo = github.context.payload.repository.name;
   const owner = github.context.payload.repository.owner.login;
+
   // Properties
   const info = await getRepoInfo(owner, repo);
   const teams = await getTeamNames(owner, repo);
+
   // Facts
   const template = getRepoTemplate(info);
+
   // Set protections
   setBranchProtection(owner, repo, teams);
   setTeamRepoPermissions(owner, repo, teams);
+
+  // If repo has a template
+  if (template) cloneBranches(template);
+
 };
 
 run();
