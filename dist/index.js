@@ -15804,10 +15804,11 @@ const getRepoTemplate = async (info) => {
   let templateInfo;
   if (info.template_repository) {
     let template = info.template_repository;
-    console.log(template);
+    // console.log(template);
     templateInfo = {
       owner: template.owner.login,
-      repo: template.name
+      repo: template.name,
+      clone: template.clone_url
     }
   }
   return templateInfo;
@@ -15851,10 +15852,13 @@ const setTeamRepoPermissions = async (owner, repo, teams) => {
   }
 }
 
-const cloneBranches = async (owner, repo) => {
-  let info = await fetchBranches(owner, repo);
+const cloneBranches = async (template) => {
+  let info = await fetchBranches(template.owner, template.repo);
   let branches = info.data;
-  // EXEC
+  exec(`git clone {template.clone}`, {
+    stdio: [0, 1, 2],
+    cwd: path.resolve(__dirname, '')
+  });
 }
 
 const run = async () => {
@@ -15875,7 +15879,7 @@ const run = async () => {
   setTeamRepoPermissions(owner, repo, teams);
 
   // If repo has a template
-  if (template) cloneBranches(template.owner, template.repo);
+  if (template) cloneBranches(template);
 
 };
 
