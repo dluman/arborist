@@ -104,7 +104,7 @@ const run = async () => {
 
   // Facts
   const template = getRepoTemplate(info.data);
-
+  console.log(template);
   // Set protections
   setBranchProtection(owner, repo, teams);
   setTeamRepoPermissions(owner, repo, teams);
