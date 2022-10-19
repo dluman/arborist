@@ -54,6 +54,14 @@ const getRepoTemplate = async (info) => {
   return templateInfo;
 };
 
+const fetchBranches = async(owner, repo) => {
+  let info = await octokit.rest.repos.listBranches({
+    owner,
+    repo
+  });
+  return info;
+};
+
 // Set
 
 const setBranchProtection = async (owner, repo, teams) => {
@@ -83,13 +91,9 @@ const setTeamRepoPermissions = async (owner, repo, teams) => {
   }
 }
 
-const fetchBranches = async (owner, repo) => {
-
-}
-
 const cloneBranches = async (owner, repo) => {
-  console.log(owner);
-  console.log(repo);
+  let branches = await fetchBranches(owner, repo);
+  console.log(branches);
 }
 
 const run = async () => {
