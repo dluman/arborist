@@ -45,7 +45,10 @@ const getRepoInfo = async (owner, repo) => {
 const getRepoTemplate = async (info) => {
   if (info.template_repository) {
     console.log(info.template_repository);
-    return info.template_repository.clone_url;
+    return {
+      owner: info.template_repository.owner,
+      repo: info.template_repository.name
+    }
   }
   return undefined;
 };
@@ -83,8 +86,9 @@ const fetchBranches = async (owner, repo) => {
 
 }
 
-const cloneBranches = async (template) => {
-
+const cloneBranches = async (owner, repo) => {
+  console.log(owner);
+  console.log(repo);
 }
 
 const run = async () => {
@@ -105,7 +109,7 @@ const run = async () => {
   setTeamRepoPermissions(owner, repo, teams);
 
   // If repo has a template
-  if (template) cloneBranches(template);
+  if (template) cloneBranches(template.owner, template.repo);
 
 };
 
