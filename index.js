@@ -1,6 +1,9 @@
 const core = require('@actions/core');
+const path = require('path');
 const async = require('async');
 const github = require('@actions/github');
+
+const { exec } = require('child_process');
 
 const octokit = github.getOctokit(
   process.env.GITHUB_TOKEN
@@ -46,6 +49,7 @@ const getRepoTemplate = async (info) => {
   let templateInfo;
   if (info.template_repository) {
     let template = info.template_repository;
+    console.log(template);
     templateInfo = {
       owner: template.owner.login,
       repo: template.name
@@ -57,7 +61,8 @@ const getRepoTemplate = async (info) => {
 const fetchBranches = async(owner, repo) => {
   let info = await octokit.rest.repos.listBranches({
     owner,
-    repo
+    repo,
+    protected: false
   });
   return info;
 };
@@ -92,8 +97,9 @@ const setTeamRepoPermissions = async (owner, repo, teams) => {
 }
 
 const cloneBranches = async (owner, repo) => {
-  let branches = await fetchBranches(owner, repo);
-  console.log(branches);
+  let info = await fetchBranches(owner, repo);
+  let branches = info.data;
+  // EXEC
 }
 
 const run = async () => {
