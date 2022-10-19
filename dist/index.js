@@ -15791,10 +15791,10 @@ const getRepoInfo = async (owner, repo) => {
 
 const getRepoTemplate = async (info) => {
   if (info.template_repository) {
-    console.log(info.template_repository);
+    let template = info.template_repository;
     return {
-      owner: info.template_repository.owner,
-      repo: info.template_repository.name
+      owner: template.owner.login,
+      repo: template.name
     }
   }
   return undefined;
