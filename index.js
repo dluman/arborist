@@ -6,7 +6,7 @@ const octokit = github.getOctokit(
   process.env.GITHUB_TOKEN
 );
 
-// Get
+// Gets
 
 const getContributors = async (owner, repo) => {
   let list = await octokit.rest.repos.listContributors({
