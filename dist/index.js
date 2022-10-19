@@ -15790,7 +15790,8 @@ const getRepoInfo = async (owner, repo) => {
 };
 
 const getRepoTemplate = async (info) => {
-  console.log(info);
+  console.log(info.template_repository.owner);
+  console.log(info.template_repository);
   if (info.template_repository) {
     console.log(info.template_repository);
     return info.template_repository.clone_url;
