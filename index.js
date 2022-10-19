@@ -99,7 +99,7 @@ const run = async () => {
   const teams = await getTeamNames(owner, repo);
 
   // Facts
-  const template = getRepoTemplate(info);
+  const template = getRepoTemplate(info.data);
 
   // Set protections
   setBranchProtection(owner, repo, teams);
