@@ -15856,11 +15856,10 @@ const cloneBranches = async (template) => {
   let info = await fetchBranches(template.owner, template.repo);
   let branches = info.data;
   exec(`git clone ${template.clone}`, (error, stdout, stderr) => {
-    console.log(stdout);
     process.chdir(template.repo);
-  });
-  exec(`git fetch --all`, (error, stdout, stderr) => {
-    console.log(stdout);
+    exec(`git fetch --all`, (error, stdout, stderr) => {
+      console.log(stdout);
+    });
   });
 }
 
