@@ -101,7 +101,7 @@ const cloneBranches = async (template) => {
   let info = await fetchBranches(template.owner, template.repo);
   let branches = info.data;
   let { stdout, stderr } = exec(`git clone ${template.clone}`);
-  console.log(stdout);
+  console.log(await stdout);
 }
 
 const run = async () => {
