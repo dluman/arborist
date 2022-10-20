@@ -100,12 +100,8 @@ const setTeamRepoPermissions = async (owner, repo, teams) => {
 const cloneBranches = async (template) => {
   let info = await fetchBranches(template.owner, template.repo);
   let branches = info.data;
-  exec(`git clone ${template.clone}`, (error, stdout, stderr) => {
-    process.chdir(template.repo);
-    exec(`git fetch --all`, (error, stdout, stderr) => {
-      console.log(stdout);
-    });
-  });
+  let { stdout, stderr } = exec(`git clone ${template.clone}`);
+  console.log(stdout);
 }
 
 const run = async () => {
