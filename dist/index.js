@@ -15872,7 +15872,7 @@ const setRemote = async(template) => {
 // Runner
 
 const execRun = async(cmd) => {
-  let { stdout, stderr } = exec(`${cmd}`);
+  let { stdout, stderr } = await exec(`${cmd}`);
   return {
     stdout: stdout,
     strerr: stderr
