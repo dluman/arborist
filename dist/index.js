@@ -15867,8 +15867,10 @@ const setRemote = async(template) => {
   let response = await execRun(`git remote add template ${template.clone}`);
   response = await(execRun(`git fetch template`));
   for (let branch of branches) {
-    console.log(branch);
+    response = await execRun(`git checkout -b ${branch.name} template/${branch.name}`)
   }
+  response = await execRun(`git branch`);
+  console.log(response.stdout);
 }
 
 // Runner
