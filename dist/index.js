@@ -15759,7 +15759,7 @@ const util = __nccwpck_require__(3837);
 const async = __nccwpck_require__(428);
 const github = __nccwpck_require__(9161);
 
-const { exec } = __nccwpck_require__(2081);
+const exec = util.promisify((__nccwpck_require__(2081).exec));
 
 const octokit = github.getOctokit(
   process.env.GITHUB_TOKEN

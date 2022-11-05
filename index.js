@@ -4,7 +4,7 @@ const util = require('util');
 const async = require('async');
 const github = require('@actions/github');
 
-const { exec } = require('child_process');
+const exec = util.promisify(require('child_process').exec);
 
 const octokit = github.getOctokit(
   process.env.GITHUB_TOKEN
