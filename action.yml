@@ -3,5 +3,3 @@ description: 'Branch protection and reconstruction for GitHub Classroom assignme
 runs:
   using: 'node16'
   main: 'dist/index.js'
-  steps:
-    - uses: actions/checkout@v3
