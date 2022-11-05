@@ -106,6 +106,11 @@ const cloneBranches = async (template) => {
   console.log(await stdout);
 }
 
+const setGit = async() => {
+  await execRun(`git config --global user.name "github-classroom[bot]"`);
+  await execRun(`git config --global user.email "github-classroom[bot]@users.noreply.github.com"`);
+}
+
 const setRemote = async(template) => {
   let info = await fetchBranches(template.owner, template.repo);
   let branches = info.data;
@@ -113,9 +118,10 @@ const setRemote = async(template) => {
   response = await(execRun(`git fetch template`));
   for (let branch of branches) {
     response = await execRun(`git checkout -b ${branch.name} template/${branch.name}`)
+    response = await execRun(`git push origin ${branch.name}`);
+    resopnse = await execRun(`git checkout main`);
   }
   response = await execRun(`git branch`);
-  console.log(response.stdout);
 }
 
 // Runner
