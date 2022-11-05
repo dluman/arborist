@@ -98,14 +98,6 @@ const setTeamRepoPermissions = async (owner, repo, teams) => {
   }
 }
 
-// TODO: Don't clone, just set origin, fetch and transfer?
-const cloneBranches = async (template) => {
-  let info = await fetchBranches(template.owner, template.repo);
-  let branches = info.data;
-  let { stdout, stderr } = exec(`git clone ${template.clone}`);
-  console.log(await stdout);
-}
-
 const setGit = async() => {
   await execRun(`git config --global user.name "github-classroom[bot]"`);
   await execRun(`git config --global user.email "github-classroom[bot]@users.noreply.github.com"`);
@@ -114,6 +106,7 @@ const setGit = async() => {
 const setRemote = async(template) => {
   let info = await fetchBranches(template.owner, template.repo);
   let branches = info.data;
+  info = await setGit();
   let response = await execRun(`git remote add template ${template.clone}`);
   response = await(execRun(`git fetch template`));
   for (let branch of branches) {
