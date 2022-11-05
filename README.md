@@ -1,5 +1,7 @@
 # The Arborist
 
+![Arborist logo](https://raw.githubusercontent.com/term-world/arborist/media/media/CMPSC%20-%20arborist.png)
+
 The automated GitHub branch protector!
 
 ## Description
