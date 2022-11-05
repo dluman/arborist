@@ -98,6 +98,7 @@ const setTeamRepoPermissions = async (owner, repo, teams) => {
   }
 }
 
+// TODO: Don't clone, just set origin, fetch and transfer?
 const cloneBranches = async (template) => {
   let info = await fetchBranches(template.owner, template.repo);
   let branches = info.data;
