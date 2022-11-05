@@ -15755,6 +15755,7 @@ var __webpack_exports__ = {};
 (() => {
 const core = __nccwpck_require__(348);
 const path = __nccwpck_require__(1017);
+const util = __nccwpck_require__(3837);
 const async = __nccwpck_require__(428);
 const github = __nccwpck_require__(9161);
 
@@ -15859,6 +15860,13 @@ const cloneBranches = async (template) => {
   console.log(await stdout);
 }
 
+const setRemote = async(template) => {
+  let info = await fetchBranches(template.owner, template.repo);
+  let branches = info.data;
+  let { stdout, stderr } = exec(`git remote add template ${template.clone}`);
+  console.log(branches);
+}
+
 const run = async () => {
 
   // Constants
@@ -15877,7 +15885,7 @@ const run = async () => {
   setTeamRepoPermissions(owner, repo, teams);
 
   // If repo has a template
-  if (template) cloneBranches(template);
+  if (template) setRemote(template);
 
 };
 

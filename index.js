@@ -1,5 +1,6 @@
 const core = require('@actions/core');
 const path = require('path');
+const util = require('util');
 const async = require('async');
 const github = require('@actions/github');
 
@@ -104,6 +105,13 @@ const cloneBranches = async (template) => {
   console.log(await stdout);
 }
 
+const setRemote = async(template) => {
+  let info = await fetchBranches(template.owner, template.repo);
+  let branches = info.data;
+  let { stdout, stderr } = exec(`git remote add template ${template.clone}`);
+  console.log(branches);
+}
+
 const run = async () => {
 
   // Constants
@@ -122,7 +130,7 @@ const run = async () => {
   setTeamRepoPermissions(owner, repo, teams);
 
   // If repo has a template
-  if (template) cloneBranches(template);
+  if (template) setRemote(template);
 
 };
 
