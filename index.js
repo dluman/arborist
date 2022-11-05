@@ -109,8 +109,19 @@ const cloneBranches = async (template) => {
 const setRemote = async(template) => {
   let info = await fetchBranches(template.owner, template.repo);
   let branches = info.data;
-  let { stdout, stderr } = exec(`git remote add template ${template.clone}`);
-  console.log(branches);
+  let response = await execRun(`git remote add template ${template.clone}`);
+  console.log(response.stdout);
+  console.log(response.stderr);
+}
+
+// Runner
+
+const execRun = async(cmd) => {
+  let { stdout, stderr } = exec(`${cmd}`);
+  return {
+    stdout: stdout,
+    strerr: stderr
+  }
 }
 
 const run = async () => {
