@@ -80,18 +80,29 @@ const getCommits = async(owner, repo) => {
 // Set
 
 const setBranchProtection = async (owner, repo, teams) => {
-  let branches = ['main', 'feedback'];
+  let branches = [{
+    name: 'main',
+    restrictions: null,
+    approvals: 3
+  },
+  {
+    name: 'feedback',
+    restrictions: {
+      users: 'dluman'
+    },
+    approvals: 1
+  }];
+
   for (let branch in branches) {
-    console.log(`UPDATING: ${branch}`);
     octokit.rest.repos.updateBranchProtection({
       owner: owner,
       repo: repo,
-      branch: branches[branch],
+      branch: branch.name,
       required_status_checks: null,
       enforce_admins: true,
-      restrictions: null,
+      restrictions: branch.restrictions,
       required_pull_request_reviews: {
-        required_approving_review_count: 3,
+        required_approving_review_count: branch.approvals,
         dismiss_stale_reviews: true
       },
     });
