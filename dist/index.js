@@ -15824,6 +15824,14 @@ const getBranches = async(owner, repo) => {
   return info;
 };
 
+const getCommits = async(owner, repo) => {
+  let info = await octokit.rest.repos.listCommits({
+    owner: owner,
+    repo: repo
+  });
+  return info.length;
+};
+
 // Set
 
 const setBranchProtection = async (owner, repo, teams) => {
@@ -15897,6 +15905,9 @@ const run = async () => {
 
   // Facts
   const template = await getRepoTemplate(info.data);
+  const commits = await getCommits(owner, repo);
+
+  console.log(commits);
 
   // Set protections
   setBranchProtection(owner, repo, teams);
