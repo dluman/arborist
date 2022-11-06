@@ -86,7 +86,7 @@ const setBranchProtection = async (owner, repo, teams) => {
     octokit.rest.repos.updateBranchProtection({
       owner: owner,
       repo: repo,
-      branch: branch,
+      branch: branches[branch],
       required_status_checks: null,
       enforce_admins: true,
       restrictions: null,
