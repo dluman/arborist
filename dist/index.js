@@ -15829,7 +15829,7 @@ const getCommits = async(owner, repo) => {
     owner: owner,
     repo: repo
   });
-  return info.length;
+  return info;
 };
 
 // Set
