@@ -15840,7 +15840,7 @@ const setBranchProtection = async (owner, repo, teams) => {
     octokit.rest.repos.updateBranchProtection({
       owner: owner,
       repo: repo,
-      branch: 'main',
+      branch: branch,
       required_status_checks: null,
       enforce_admins: true,
       restrictions: null,
@@ -15907,7 +15907,7 @@ const run = async () => {
   const template = await getRepoTemplate(info.data);
   const commits = await getCommits(owner, repo);
 
-  console.log(commits);
+  console.log(commits.data[commits.data.length -1].author);
 
   // Set protections
   setBranchProtection(owner, repo, teams);
