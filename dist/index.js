@@ -15837,6 +15837,7 @@ const getCommits = async(owner, repo) => {
 const setBranchProtection = async (owner, repo, teams) => {
   let branches = ['main', 'feedback'];
   for (let branch in branches) {
+    console.log(`UPDATING: ${branch}`);
     octokit.rest.repos.updateBranchProtection({
       owner: owner,
       repo: repo,
