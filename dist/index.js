@@ -15843,7 +15843,7 @@ const setBranchProtection = async (owner, repo, teams) => {
   {
     name: 'feedback',
     restrictions: {
-      users: 'dluman'
+      users: ['dluman']
     },
     approvals: 1
   }];
