@@ -1,8 +1,9 @@
-const core = require('@actions/core');
 const path = require('path');
 const util = require('util');
 const async = require('async');
+
 const github = require('@actions/github');
+const core = require('@actions/core');
 
 const exec = util.promisify(require('child_process').exec);
 
@@ -60,7 +61,7 @@ const getRepoTemplate = async (info) => {
   return templateInfo;
 };
 
-const fetchBranches = async(owner, repo) => {
+const getBranches = async(owner, repo) => {
   let info = await octokit.rest.repos.listBranches({
     owner,
     repo,
@@ -104,7 +105,7 @@ const setGit = async() => {
 }
 
 const setRemote = async(template) => {
-  let info = await fetchBranches(template.owner, template.repo);
+  let info = await getBranches(template.owner, template.repo);
   let branches = info.data;
   info = await setGit();
   let response = await execRun(`git remote add template ${template.clone}`);
