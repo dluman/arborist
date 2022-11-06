@@ -51,7 +51,6 @@ const getRepoTemplate = async (info) => {
   let templateInfo;
   if (info.template_repository) {
     let template = info.template_repository;
-    // console.log(template);
     templateInfo = {
       owner: template.owner.login,
       repo: template.name,
@@ -73,18 +72,21 @@ const getBranches = async(owner, repo) => {
 // Set
 
 const setBranchProtection = async (owner, repo, teams) => {
-  octokit.rest.repos.updateBranchProtection({
-    owner: owner,
-    repo: repo,
-    branch: 'main',
-    required_status_checks: null,
-    enforce_admins: true,
-    restrictions: null,
-    required_pull_request_reviews: {
-      required_approving_review_count: 3,
-      dismiss_stale_reviews: true
-    },
-  });
+  let branches = ['main', 'feedback'];
+  for (let branch in branches) {
+    octokit.rest.repos.updateBranchProtection({
+      owner: owner,
+      repo: repo,
+      branch: 'main',
+      required_status_checks: null,
+      enforce_admins: true,
+      restrictions: null,
+      required_pull_request_reviews: {
+        required_approving_review_count: 3,
+        dismiss_stale_reviews: true
+      },
+    });
+  }
 }
 
 const setTeamRepoPermissions = async (owner, repo, teams) => {
