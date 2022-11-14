@@ -15922,7 +15922,7 @@ const run = async () => {
   const lastAuthor = commits.data[commits.data.length -1].author;
 
   // Set protections
-  if (template && lastAuthor == 'github-classroom[bot]') setBranchProtection(owner, repo, teams);
+  if (template) setBranchProtection(owner, repo, teams);
   if (template) setTeamRepoPermissions(owner, repo, teams);
 
   // If repo has a template and this is the last bot commit
