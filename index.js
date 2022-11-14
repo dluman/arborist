@@ -173,6 +173,8 @@ const run = async () => {
   // If repo has a template and this is the last bot commit
   if (template && lastAuthor == 'github-classroom[bot]') setRemote(template);
 
+  if (!template && lastAuthor != 'github-classroom[bot]') console.log("MAIN TEMPLATE: No action taken.");
+
 };
 
 run();
