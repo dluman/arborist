@@ -15838,7 +15838,7 @@ const setBranchProtection = async (owner, repo, teams) => {
   let branches = [{
     name: 'main',
     restrictions: null,
-    approvals: 3
+    approvals: 1
   },
   {
     name: 'feedback',
