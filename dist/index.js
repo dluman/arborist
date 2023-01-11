@@ -15845,13 +15845,14 @@ const setBranchProtection = async (owner, repo, teams) => {
       approvals: approvals
     }
   });
+  console.log(override == 'true' ? true : null);
   for (let branch of branches) {
     octokit.rest.repos.updateBranchProtection({
       owner: owner,
       repo: repo,
       branch: branch.name,
       required_status_checks: null,
-      enforce_admins: override == 'true' ? 'true' : null,
+      enforce_admins: override == 'true' ? true : null,
       restrictions: branch.restrictions,
       required_pull_request_reviews: {
         required_approving_review_count: branch.approvals,
