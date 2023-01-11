@@ -82,7 +82,7 @@ const getCommits = async(owner, repo) => {
 const setBranchProtection = async (owner, repo, teams) => {
   let branches = core.getInput('branches');
   let override = core.getInput('bypass-user');
-  let approvals = core.getINput('min-approvals');
+  let approvals = core.getInput('min-approvals');
   branches = branches.map((branch) => {
     return {
       name: branch,
@@ -92,6 +92,7 @@ const setBranchProtection = async (owner, repo, teams) => {
         apps: []
       },
       approvals: approvals
+    }
   });
   for (let branch of branches) {
     octokit.rest.repos.updateBranchProtection({
