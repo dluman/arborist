@@ -10,11 +10,11 @@ inputs:
     required: true
     default: 1
     type: number
-  logins-bypass:
+  enforce-admins:
     description: 'Allows named accounts to bypass the branch protection'
     required: true
-    default: ''
-    type: string
+    default: false
+    type: boolean
 runs:
   using: 'node16'
   main: 'dist/index.js'
