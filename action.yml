@@ -10,10 +10,10 @@ inputs:
     required: true
     default: 1
     type: number
-  admin-bypass:
-    description: 'Allows admins to bypass the branch protection'
+  logins-bypass:
+    description: 'Allows named accounts to bypass the branch protection'
     required: true
-    default: false
+    default: ''
     type: string
 runs:
   using: 'node16'
