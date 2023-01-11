@@ -96,7 +96,7 @@ const setBranchProtection = async (owner, repo, teams) => {
       repo: repo,
       branch: branch.name,
       required_status_checks: null,
-      enforce_admins: true ? !!override : null,
+      enforce_admins: !!override ? true : null,
       restrictions: branch.restrictions,
       required_pull_request_reviews: {
         required_approving_review_count: branch.approvals,
