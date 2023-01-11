@@ -10,11 +10,11 @@ inputs:
     required: true
     default: 1
     type: number
-  bypass-users:
-    description: 'Users allowed to bypass branch protection'
+  admin-bypass:
+    description: 'Allows admins to bypass the branch protection'
     required: true
-    default: '[]'
-    type: string'
+    default: false
+    type: string
 runs:
   using: 'node16'
   main: 'dist/index.js'

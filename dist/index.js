@@ -15836,16 +15836,12 @@ const getCommits = async(owner, repo) => {
 
 const setBranchProtection = async (owner, repo, teams) => {
   let branches = JSON.parse(core.getInput('branches'));
-  let override = JSON.parse(core.getInput('bypass-users'));
+  let override = core.getInput('admin-bypass');
   let approvals = parseInt(core.getInput('min-approvals'));
   branches = branches.map((branch) => {
     return {
       name: branch,
-      restrictions: {
-        users: override,
-        teams: [],
-        apps: []
-      },
+      restrictions: null,
       approvals: approvals
     }
   });
@@ -15855,7 +15851,7 @@ const setBranchProtection = async (owner, repo, teams) => {
       repo: repo,
       branch: branch.name,
       required_status_checks: null,
-      enforce_admins: true,
+      enforce_admins:  true ? override : 0,
       restrictions: branch.restrictions,
       required_pull_request_reviews: {
         required_approving_review_count: branch.approvals,
