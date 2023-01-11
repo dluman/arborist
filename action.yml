@@ -1,5 +1,18 @@
 name: 'Arborist'
 description: 'Branch protection and reconstruction for GitHub Classroom assignments'
+inputs:
+  branches:
+    description: 'Branches to protect provided as an array'
+    required: true
+    default: ['main', 'feedback']
+  min-approvals:
+    description: 'Minimum number of approvals for branches'
+    required: true
+    default: 1
+  bypass-user:
+    description: 'User allowed to bypass branch protection'
+    required: true
+    default: []
 runs:
   using: 'node16'
   main: 'dist/index.js'

@@ -80,30 +80,29 @@ const getCommits = async(owner, repo) => {
 // Set
 
 const setBranchProtection = async (owner, repo, teams) => {
-  let branches = [{
-    name: 'main',
-    restrictions: null,
-    approvals: 1
-  },
-  {
-    name: 'feedback',
-    restrictions: {
-      users: [],
-      teams: [],
-      apps: []
-    },
-    approvals: 1
-  }];
-  for (let branch in branches) {
+  let branches = core.getInput('branches');
+  let override = core.getInput('bypass-user');
+  let approvals = core.getINput('min-approvals');
+  branches = branches.map((branch) => {
+    return {
+      name: branch,
+      restrictions: {
+        users: [override],
+        teams: [],
+        apps: []
+      },
+      approvals: approvals
+  });
+  for (let branch of branches) {
     octokit.rest.repos.updateBranchProtection({
       owner: owner,
       repo: repo,
-      branch: branches[branch].name,
+      branch: branch.name,
       required_status_checks: null,
       enforce_admins: true,
-      restrictions: branches[branch].restrictions,
+      restrictions: branch.restrictions,
       required_pull_request_reviews: {
-        required_approving_review_count: branches[branch].approvals,
+        required_approving_review_count: branch.approvals,
         dismiss_stale_reviews: true
       },
     });
