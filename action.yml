@@ -4,7 +4,7 @@ inputs:
   branches:
     description: 'Branches to protect provided as an array'
     required: true
-    default: ${{ fromJson(["main", "feedback"]) }}
+    default: "['main', 'feedback']"
   min-approvals:
     description: 'Minimum number of approvals for branches'
     required: true
