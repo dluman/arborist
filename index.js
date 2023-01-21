@@ -160,7 +160,7 @@ const run = async () => {
   // Facts
   const template = await getRepoTemplate(info.data);
   const commits = await getCommits(owner, repo);
-  const lastAuthor = commits.data[commits.data.length -1].author;
+  const lastAuthor = commits.data[0].author;
 
   // Set protections
   if (template) setBranchProtection(owner, repo, teams);
