@@ -15838,7 +15838,6 @@ const setBranchProtection = async (owner, repo, teams) => {
   let branches = JSON.parse(core.getInput('branches'));
   let override = core.getInput('enforce-admins');
   let approvals = parseInt(core.getInput('min-approvals'));
-  let force = (core.getInput('force-protect') === 'true');
   branches = branches.map((branch) => {
     return {
       name: branch,
@@ -15917,6 +15916,9 @@ const run = async () => {
   const template = await getRepoTemplate(info.data);
   const commits = await getCommits(owner, repo);
   const lastAuthor = commits.data[0].author;
+
+  // Check for forced branch protection
+  let force = (core.getInput('force-protect') === 'true');
 
   // Set protections
   if (template || force) setBranchProtection(owner, repo, teams);
