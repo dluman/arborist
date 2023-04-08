@@ -15,6 +15,11 @@ inputs:
     required: true
     default: false
     type: boolean
+  force-protect:
+    description: 'Forces branch protection regardless of assignment/template status'
+    required: false
+    default: false
+    type: boolean
 runs:
   using: 'node16'
   main: 'dist/index.js'

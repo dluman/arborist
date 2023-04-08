@@ -83,6 +83,7 @@ const setBranchProtection = async (owner, repo, teams) => {
   let branches = JSON.parse(core.getInput('branches'));
   let override = core.getInput('enforce-admins');
   let approvals = parseInt(core.getInput('min-approvals'));
+  let force = (core.getInput('force-protect') === 'true');
   branches = branches.map((branch) => {
     return {
       name: branch,
@@ -163,13 +164,14 @@ const run = async () => {
   const lastAuthor = commits.data[0].author;
 
   // Set protections
-  if (template) setBranchProtection(owner, repo, teams);
+  if (template || force) setBranchProtection(owner, repo, teams);
   if (template) setTeamRepoPermissions(owner, repo, teams);
 
   // If repo has a template and this is the last bot commit
   if (template && lastAuthor == 'github-classroom[bot]') setRemote(template);
 
-  if (!template && lastAuthor != 'github-classroom[bot]') console.log("MAIN TEMPLATE: No action taken.");
+  // If repo is not a template and not an assignment
+  if (!template && lastAuthor != 'github-classroom[bot]' && !force) console.log("MAIN TEMPLATE: No action taken.");
 
 };
 
