@@ -22,6 +22,15 @@ const getContributors = async (owner, repo) => {
 };
 
 
+const getRepositoryTeams = async (owner, repo) => {
+  let list = await octokit.rest.repos.listTeams({
+    owner: owner,
+    repo: repo
+  });
+  console.log(list);
+  return list;
+};
+
 const getTeamNames = async (owner, repo) => {
   let slugs = [];
   let list = await octokit.rest.repos.listTeams({
