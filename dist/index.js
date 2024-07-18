@@ -17,14 +17,6 @@ module.exports = eval("require")("@actions/github");
 
 /***/ }),
 
-/***/ 148:
-/***/ ((module) => {
-
-module.exports = eval("require")("async");
-
-
-/***/ }),
-
 /***/ 81:
 /***/ ((module) => {
 
@@ -92,7 +84,7 @@ var __webpack_exports__ = {};
 (() => {
 const path = __nccwpck_require__(17);
 const util = __nccwpck_require__(837);
-const async = __nccwpck_require__(148);
+//const async = require('async');
 
 const github = __nccwpck_require__(887);
 const core = __nccwpck_require__(321);
