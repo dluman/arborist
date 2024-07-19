@@ -15777,21 +15777,25 @@ const getContributors = async (owner, repo) => {
 };
 
 const getTeamNames = async (owner, repo) => {
-  let slugs = [];
+  let teams = {};
+
   let list = await octokit.rest.repos.listTeams({
     owner: owner,
     repo: repo
   });
-  let teams = list.data;
-  console.log(teams);
-  async.map(teams, (value, fn) => {
-    fn(null, value.slug);
+
+  let data = list.data;
+
+  async.map(data, (value, fn) => {
+    fn(null, value);
   }, (err, res) => {
     for(let item in res){
-      slugs.push(res[item]);
+      data[res[item].slug] = res[item].permission;
+      //slugs.push(res[item]);
     }
   });
-  return slugs;
+
+  return teams;
 };
 
 const getRepoInfo = async (owner, repo) => {
@@ -15919,7 +15923,7 @@ const run = async () => {
   // Properties
   const info = await getRepoInfo(owner, repo);
   const teams = await getTeamNames(owner, repo);
-  console.log(teams);
+  console.log(teams)
   // Facts
   const template = await getRepoTemplate(info.data);
   const commits = await getCommits(owner, repo);
