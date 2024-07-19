@@ -35,7 +35,9 @@ const getTeamNames = async (owner, repo) => {
     fn(null, value);
   }, (err, res) => {
     for(let item in res){
-      teams.push({res[item].slug: res[item].permissions});
+      let name = res[item].slug;
+      let permission = res[item].permission;
+      teams.push({name: permission});
     }
   });
   console.log(teams)

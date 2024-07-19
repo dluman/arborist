@@ -15790,11 +15790,12 @@ const getTeamNames = async (owner, repo) => {
     fn(null, value);
   }, (err, res) => {
     for(let item in res){
-      console.log(res[item].slug);
-      //slugs.push(res[item]);
+      let name = res[item].slug;
+      let permission = res[item].permission;
+      teams.push({name: permission});
     }
   });
-
+  console.log(teams)
   return teams;
 };
 
