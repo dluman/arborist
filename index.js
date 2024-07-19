@@ -118,16 +118,16 @@ const setBranchProtection = async (owner, repo, teams) => {
 const setTeamRepoPermissions = async (owner, repo, teams) => {
   let overrides = JSON.parse(core.getInput('team-roles'));
   for(let team of teams){
-    if(overrides[team]) {
+    if(team in overrides) {
+        print(`OVERRIDE FOR ${team}`);
         team.permission = overrides[team];
     }
-    console.log(team);
     octokit.rest.teams.addOrUpdateRepoPermissionsInOrg({
       org: owner,
-      team_slug: team.name,
+      team_slug: Object.keys(team)[0],
       owner: owner,
       repo: repo,
-      permission: team.permission
+      permission: Object.values(team)[0]
     });
   }
 }
