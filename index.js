@@ -21,22 +21,27 @@ const getContributors = async (owner, repo) => {
   return list;
 };
 
-
 const getTeamNames = async (owner, repo) => {
-  let slugs = [];
+  let teams = [];
+
   let list = await octokit.rest.repos.listTeams({
     owner: owner,
     repo: repo
   });
-  let teams = list.data;
-  async.map(teams, (value, fn) => {
-    fn(null, value.slug);
+
+  let data = list.data;
+
+  async.map(data, (value, fn) => {
+    fn(null, value);
   }, (err, res) => {
     for(let item in res){
-      slugs.push(res[item]);
+      let name = res[item].slug;
+      let permission = res[item].permission;
+      teams.push({[name] : permission});
     }
   });
-  return slugs;
+
+  return teams;
 };
 
 const getRepoInfo = async (owner, repo) => {
@@ -84,9 +89,20 @@ const setBranchProtection = async (owner, repo, teams) => {
   let override = core.getInput('enforce-admins');
   let approvals = parseInt(core.getInput('min-approvals'));
   branches = branches.map((branch) => {
+    let restrictions = {users: [], teams: []};
+    for (let team of teams) {
+        let name = Object.keys(team)[0];
+        if (Object.values(team)[0] = 'maintain') {
+            restrictions.teams.push(name);
+        }
+    }
+    if(restrictions.teams.length === 0) {
+        restrictions = null;
+    }
+    console.log(restrictions);
     return {
       name: branch,
-      restrictions: null,
+      restrictions: restrictions,
       approvals: approvals
     }
   });
@@ -111,13 +127,13 @@ const setBranchProtection = async (owner, repo, teams) => {
 }
 
 const setTeamRepoPermissions = async (owner, repo, teams) => {
-  for(let team in teams){
+  for(let team of teams){
     octokit.rest.teams.addOrUpdateRepoPermissionsInOrg({
       org: owner,
-      team_slug: teams[team],
+      team_slug: Object.keys(team)[0],
       owner: owner,
       repo: repo,
-      permission: 'push'
+      permission: Object.values(team)[0]
     });
   }
 }
@@ -174,8 +190,22 @@ const run = async () => {
   let force = (core.getInput('force-protect') === 'true');
 
   // Set protections
+  // TODO: Fix this redundancy? Needed to set repo permissions and to
+  //       update the branch management permissions.
+
+  let overrides = JSON.parse(core.getInput('team-roles'));
+  for(let team of teams){
+    let name = Object.keys(team)[0];
+    let idx = teams.indexOf(team);
+    if(name in overrides) {
+      teams[idx] = {[name]: overrides[name]}
+    }
+  }
+
+  console.log(teams);
+
+  if (template || force) setTeamRepoPermissions(owner, repo, teams);
   if (template || force) setBranchProtection(owner, repo, teams);
-  if (template) setTeamRepoPermissions(owner, repo, teams);
 
   // If repo has a template and this is the last bot commit
   if (template && lastAuthor == 'github-classroom[bot]') setRemote(template);

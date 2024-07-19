@@ -10,6 +10,11 @@ inputs:
     required: true
     default: 1
     type: number
+  team-roles:
+    description: 'Key-value pairs of teams and applicable repository roles'
+    required: false
+    default: '{}'
+    type: string
   enforce-admins:
     description: 'Allows named accounts to bypass the branch protection'
     required: true
@@ -21,5 +26,5 @@ inputs:
     default: false
     type: boolean
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'dist/index.js'
