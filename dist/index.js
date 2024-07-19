@@ -15783,6 +15783,7 @@ const getTeamNames = async (owner, repo) => {
     repo: repo
   });
   let teams = list.data;
+  console.log(teams);
   async.map(teams, (value, fn) => {
     fn(null, value.slug);
   }, (err, res) => {
