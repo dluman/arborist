@@ -15776,16 +15776,6 @@ const getContributors = async (owner, repo) => {
   return list;
 };
 
-
-const getRepositoryTeams = async (owner, repo) => {
-  let list = await octokit.rest.repos.listTeams({
-    owner: owner,
-    repo: repo
-  });
-  console.log(list);
-  return list;
-};
-
 const getTeamNames = async (owner, repo) => {
   let slugs = [];
   let list = await octokit.rest.repos.listTeams({
@@ -15928,7 +15918,7 @@ const run = async () => {
   // Properties
   const info = await getRepoInfo(owner, repo);
   const teams = await getTeamNames(owner, repo);
-
+  console.log(teams);
   // Facts
   const template = await getRepoTemplate(info.data);
   const commits = await getCommits(owner, repo);
