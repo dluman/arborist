@@ -89,7 +89,7 @@ const setBranchProtection = async (owner, repo, teams) => {
   let override = core.getInput('enforce-admins');
   let approvals = parseInt(core.getInput('min-approvals'));
   branches = branches.map((branch) => {
-    let restrictions = {teams: []};
+    let restrictions = {users: [], teams: []};
     for (let team of teams) {
         let name = Object.keys(team)[0];
         if (Object.values(team)[0] = 'maintain') {
