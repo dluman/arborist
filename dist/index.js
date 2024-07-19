@@ -15790,7 +15790,7 @@ const getTeamNames = async (owner, repo) => {
     fn(null, value);
   }, (err, res) => {
     for(let item in res){
-      console.log(item);
+      console.log(res[item].slug);
       //slugs.push(res[item]);
     }
   });
