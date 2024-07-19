@@ -15871,13 +15871,12 @@ const setBranchProtection = async (owner, repo, teams) => {
 }
 
 const setTeamRepoPermissions = async (owner, repo, teams) => {
-  let overrides = JSON.parse(core.getInput('team-roles'));
+  //let overrides = JSON.parse(core.getInput('team-roles'));
   for(let team of teams){
-    let name = Object.keys(team)[0];
-    if(name in overrides) {
-        team = {[name]: overrides[name]}
-    }
-    console.log(team);
+  //  let name = Object.keys(team)[0];
+  //  if(name in overrides) {
+  //      team = {[name]: overrides[name]}
+  //  }
     octokit.rest.teams.addOrUpdateRepoPermissionsInOrg({
       org: owner,
       team_slug: Object.keys(team)[0],
@@ -15940,8 +15939,22 @@ const run = async () => {
   let force = (core.getInput('force-protect') === 'true');
 
   // Set protections
+  // TODO: Fix this redundancy? Needed to set repo permissions and to
+  //       update the branch management permissions.
+
+  let overrides = JSON.parse(core.getInput('team-roles'));
+  for(let team of teams){
+    let name = Object.keys(team)[0];
+    let idx = teams.indexOf(team);
+    if(name in overrides) {
+      teams[idx] = {[name]: overrides[name]}
+    }
+  }
+
+  console.log(teams);
+
+  if (template || force) setTeamRepoPermissions(owner, repo, teams);
   if (template || force) setBranchProtection(owner, repo, teams);
-  if (template) setTeamRepoPermissions(owner, repo, teams);
 
   // If repo has a template and this is the last bot commit
   if (template && lastAuthor == 'github-classroom[bot]') setRemote(template);
