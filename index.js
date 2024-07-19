@@ -92,13 +92,14 @@ const setBranchProtection = async (owner, repo, teams) => {
     let restrictions = {teams: []};
     for (let team of teams) {
         let name = Object.keys(team)[0];
-        if (Object.values(team)[0] in ['maintain']) {
+        if (Object.values(team)[0] = 'maintain') {
             restrictions.teams.push(name);
         }
     }
     if(restrictions.teams.length === 0) {
         restrictions = null;
     }
+    console.log(restrictions);
     return {
       name: branch,
       restrictions: restrictions,
