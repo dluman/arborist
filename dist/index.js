@@ -15873,9 +15873,7 @@ const setBranchProtection = async (owner, repo, teams) => {
 const setTeamRepoPermissions = async (owner, repo, teams) => {
   let overrides = JSON.parse(core.getInput('team-roles'));
   for(let team of teams){
-    console.log(team);
-    console.log(overrides);
-    if(team in overrides) {
+    if(Object.keys(team)[0] in overrides) {
         print(`OVERRIDE FOR ${team}`);
         team.permission = overrides[team];
     }
