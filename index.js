@@ -91,16 +91,16 @@ const setBranchProtection = async (owner, repo, teams) => {
   branches = branches.map((branch) => {
     // Below code restricts branch push to certain teams
     // rather than allowing restriction bypass
-    /*let restrictions = {users: [], teams: []};
+    let bypass = {users: [], teams: []};
     for (let team of teams) {
         let name = Object.keys(team)[0];
         if (Object.values(team)[0] = 'maintain') {
-            restrictions.teams.push(name);
+            bypass.teams.push(name);
         }
     }
-    if(restrictions.teams.length === 0) {
-        restrictions = null;
-    }*/
+    if(bypass.teams.length === 0) {
+        bypass = null;
+    }
     let restrictions = null;
     return {
       name: branch,
@@ -120,6 +120,7 @@ const setBranchProtection = async (owner, repo, teams) => {
           required_pull_request_reviews: {
             required_approving_review_count: branch.approvals,
             dismiss_stale_reviews: true,
+            bypass_pull_request_allowances: bypass
           }
         });
     } catch(err) {
