@@ -105,7 +105,8 @@ const setBranchProtection = async (owner, repo, teams) => {
     return {
       name: branch,
       restrictions: restrictions,
-      approvals: approvals
+      approvals: approvals,
+      bypass: bypass
     }
   });
   for (let branch of branches) {
@@ -120,7 +121,7 @@ const setBranchProtection = async (owner, repo, teams) => {
           required_pull_request_reviews: {
             required_approving_review_count: branch.approvals,
             dismiss_stale_reviews: true,
-            bypass_pull_request_allowances: bypass
+            bypass_pull_request_allowances: branch.bypass
           }
         });
     } catch(err) {
