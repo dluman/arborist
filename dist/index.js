@@ -15792,7 +15792,7 @@ const getTeamNames = async (owner, repo) => {
     for(let item in res){
       let name = res[item].slug;
       let permission = res[item].permission;
-      teams.push({name: permission});
+      teams.push({[name]: permission});
     }
   });
   console.log(teams)
