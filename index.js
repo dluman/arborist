@@ -89,9 +89,19 @@ const setBranchProtection = async (owner, repo, teams) => {
   let override = core.getInput('enforce-admins');
   let approvals = parseInt(core.getInput('min-approvals'));
   branches = branches.map((branch) => {
+    let restrictions = {teams: []};
+    for (let team of teams) {
+        let name = Object.keys(team)[0];
+        if (Object.values(team)[0] in ['maintain']) {
+            restrictions.teams.push(name);
+        }
+    }
+    if(restrictions.teams.length === 0) {
+        restrictions = null;
+    }
     return {
       name: branch,
-      restrictions: null,
+      restrictions: restrictions,
       approvals: approvals
     }
   });
@@ -116,12 +126,7 @@ const setBranchProtection = async (owner, repo, teams) => {
 }
 
 const setTeamRepoPermissions = async (owner, repo, teams) => {
-  //let overrides = JSON.parse(core.getInput('team-roles'));
   for(let team of teams){
-  //  let name = Object.keys(team)[0];
-  //  if(name in overrides) {
-  //      team = {[name]: overrides[name]}
-  //  }
     octokit.rest.teams.addOrUpdateRepoPermissionsInOrg({
       org: owner,
       team_slug: Object.keys(team)[0],
