@@ -119,9 +119,8 @@ const setTeamRepoPermissions = async (owner, repo, teams) => {
   let overrides = JSON.parse(core.getInput('team-roles'));
   for(let team of teams){
     let name = Object.keys(team)[0];
-    let permission = Object.values(team)[0];
     if(name in overrides) {
-        team = {[name]: permission}
+        team = {[name]: overrides[name]}
     }
     console.log(team);
     octokit.rest.teams.addOrUpdateRepoPermissionsInOrg({
