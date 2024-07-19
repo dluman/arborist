@@ -15777,7 +15777,7 @@ const getContributors = async (owner, repo) => {
 };
 
 const getTeamNames = async (owner, repo) => {
-  let teams = {};
+  let teams = [];
 
   let list = await octokit.rest.repos.listTeams({
     owner: owner,
@@ -15790,7 +15790,7 @@ const getTeamNames = async (owner, repo) => {
     fn(null, value);
   }, (err, res) => {
     for(let item in res){
-      data[res[item].slug] = res[item].permission;
+      console.log(item);
       //slugs.push(res[item]);
     }
   });
