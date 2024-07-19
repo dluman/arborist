@@ -15844,7 +15844,9 @@ const setBranchProtection = async (owner, repo, teams) => {
   let override = core.getInput('enforce-admins');
   let approvals = parseInt(core.getInput('min-approvals'));
   branches = branches.map((branch) => {
-    let restrictions = {users: [], teams: []};
+    // Below code restricts branch push to certain teams
+    // rather than allowing restriction bypass
+    /*let restrictions = {users: [], teams: []};
     for (let team of teams) {
         let name = Object.keys(team)[0];
         if (Object.values(team)[0] = 'maintain') {
@@ -15853,8 +15855,8 @@ const setBranchProtection = async (owner, repo, teams) => {
     }
     if(restrictions.teams.length === 0) {
         restrictions = null;
-    }
-    console.log(restrictions);
+    }*/
+    let restrictions = null;
     return {
       name: branch,
       restrictions: restrictions,
@@ -15956,8 +15958,6 @@ const run = async () => {
       teams[idx] = {[name]: overrides[name]}
     }
   }
-
-  console.log(teams);
 
   if (template || force) setTeamRepoPermissions(owner, repo, teams);
   if (template || force) setBranchProtection(owner, repo, teams);
