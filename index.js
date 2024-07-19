@@ -35,11 +35,10 @@ const getTeamNames = async (owner, repo) => {
     fn(null, value);
   }, (err, res) => {
     for(let item in res){
-      console.log(res[item].slug);
-      //slugs.push(res[item]);
+      teams.push({res[item].slug: res[item].permissions});
     }
   });
-
+  console.log(teams)
   return teams;
 };
 
