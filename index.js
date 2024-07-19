@@ -1,6 +1,6 @@
 const path = require('path');
 const util = require('util');
-//const async = require('async');
+const async = require('async');
 
 const github = require('@actions/github');
 const core = require('@actions/core');
