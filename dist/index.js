@@ -15792,7 +15792,7 @@ const getTeamNames = async (owner, repo) => {
     for(let item in res){
       let name = res[item].slug;
       let permission = res[item].permission;
-      teams.push({name: name, permission: permission});
+      teams.push({[name] : permission});
     }
   });
 
@@ -15871,7 +15871,11 @@ const setBranchProtection = async (owner, repo, teams) => {
 }
 
 const setTeamRepoPermissions = async (owner, repo, teams) => {
+  let overrides = JSON.parse(core.getInput('team-roles'));
   for(let team of teams){
+    if(overrides[team]) {
+        team.permission = overrides[team];
+    }
     octokit.rest.teams.addOrUpdateRepoPermissionsInOrg({
       org: owner,
       team_slug: team.name,
