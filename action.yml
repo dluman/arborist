@@ -5,6 +5,11 @@ inputs:
     description: 'Branches to protect provided as an array'
     required: true
     default: '["main", "feedback"]'
+  required-checks:
+    description: 'Key-value pairs of branches and checks required for merging'
+    required: false
+    default : '{}'
+    type: string
   min-approvals:
     description: 'Minimum number of approvals for branches'
     required: true

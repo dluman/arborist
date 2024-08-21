@@ -88,6 +88,7 @@ const setBranchProtection = async (owner, repo, teams) => {
   let branches = JSON.parse(core.getInput('branches'));
   let override = core.getInput('enforce-admins');
   let approvals = parseInt(core.getInput('min-approvals'));
+  let reqChecks = JSON.parse(core.getInput('required-checks'));
   branches = branches.map((branch) => {
     // Below code restricts branch push to certain teams
     // rather than allowing restriction bypass
@@ -102,8 +103,16 @@ const setBranchProtection = async (owner, repo, teams) => {
         bypass = {};
     }
     let restrictions = null;
+    let checks = null;
+    for (let check of reqChecks) {
+        let branchName = Object.keys(check)[0];
+        if (branchName === branch) {
+            checks = Object.values(check)[0];
+        }
+    }
     return {
       name: branch,
+      checks: checks,
       restrictions: restrictions,
       approvals: approvals,
       bypass: bypass
@@ -118,6 +127,9 @@ const setBranchProtection = async (owner, repo, teams) => {
           required_status_checks: null,
           enforce_admins: override == 'true' ? true : null,
           restrictions: branch.restrictions,
+          required_status_checks: {
+            checks: branch.checks
+          },
           required_pull_request_reviews: {
             required_approving_review_count: branch.approvals,
             dismiss_stale_reviews: true,
