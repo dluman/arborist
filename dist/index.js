@@ -15858,7 +15858,7 @@ const setBranchProtection = async (owner, repo, teams) => {
         bypass = {};
     }
     let restrictions = null;
-    let checks = (branch in reqChecks) ? {[branch]: reqChecks[branch]} : null;
+    let checks = (branch in reqChecks) ? {"checks": reqChecks[branch]} : null;
     console.log(checks);
     return {
       name: branch,
@@ -15877,9 +15877,7 @@ const setBranchProtection = async (owner, repo, teams) => {
           required_status_checks: null,
           enforce_admins: override == 'true' ? true : null,
           restrictions: branch.restrictions,
-          required_status_checks: {
-            checks: branch.checks
-          },
+          required_status_checks: branch.checks,
           required_pull_request_reviews: {
             required_approving_review_count: branch.approvals,
             dismiss_stale_reviews: true,
