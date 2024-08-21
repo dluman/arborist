@@ -15859,12 +15859,7 @@ const setBranchProtection = async (owner, repo, teams) => {
     }
     let restrictions = null;
     let checks = null;
-    for (let check of reqChecks) {
-        let branchName = Object.keys(check)[0];
-        if (branchName === branch) {
-            checks = Object.values(check)[0];
-        }
-    }
+    checks = (branch in reqChecks) ? {[branch]: reqChecks[branch]} : null;
     return {
       name: branch,
       checks: checks,
