@@ -99,7 +99,7 @@ const setBranchProtection = async (owner, repo, teams) => {
         }
     }
     if(bypass.teams.length === 0) {
-        bypass = null;
+        bypass = {};
     }
     let restrictions = null;
     return {
