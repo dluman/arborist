@@ -15858,7 +15858,7 @@ const setBranchProtection = async (owner, repo, teams) => {
         bypass = {};
     }
     let restrictions = null;
-    let checks = (branch in reqChecks) ? {"checks": reqChecks[branch]} : null;
+    let checks = (branch in reqChecks) ? {"strict": true} : null;
     console.log(checks);
     return {
       name: branch,
