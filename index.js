@@ -1,224 +1,308 @@
-const path = require('path');
 const util = require('util');
-const async = require('async');
+const { exec } = require('child_process');
 
 const github = require('@actions/github');
 const core = require('@actions/core');
 
-const exec = util.promisify(require('child_process').exec);
+const execAsync = util.promisify(exec);
 
-const octokit = github.getOctokit(
-  process.env.GITHUB_TOKEN
-);
-
-// Gets
-
-const getContributors = async (owner, repo) => {
-  let list = await octokit.rest.repos.listContributors({
-    owner: owner,
-    repo: repo
-  });
-  return list;
-};
-
-const getTeamNames = async (owner, repo) => {
-  let teams = [];
-
-  let list = await octokit.rest.repos.listTeams({
-    owner: owner,
-    repo: repo
-  });
-
-  let data = list.data;
-
-  async.map(data, (value, fn) => {
-    fn(null, value);
-  }, (err, res) => {
-    for(let item in res){
-      let name = res[item].slug;
-      let permission = res[item].permission;
-      teams.push({[name] : permission});
-    }
-  });
-
-  return teams;
-};
-
-const getRepoInfo = async (owner, repo) => {
-  let info = octokit.rest.repos.get({
-    owner: owner,
-    repo: repo
-  });
-  return info;
-};
-
-const getRepoTemplate = async (info) => {
-  let templateInfo;
-  if (info.template_repository) {
-    let template = info.template_repository;
-    templateInfo = {
-      owner: template.owner.login,
-      repo: template.name,
-      clone: template.clone_url
-    }
+// Parse a JSON input safely.
+function parseJsonInput(name, value, fallback = {}) {
+  if (value === undefined || value === null || value === '') {
+    return fallback;
   }
-  return templateInfo;
-};
+  try {
+    return JSON.parse(value);
+  } catch (err) {
+    throw new Error(`Input "${name}" is not valid JSON: ${err.message}`);
+  }
+}
 
-const getBranches = async(owner, repo) => {
-  let info = await octokit.rest.repos.listBranches({
-    owner,
-    repo,
-    protected: false
-  });
-  return info;
-};
-
-const getCommits = async(owner, repo) => {
-  let info = await octokit.rest.repos.listCommits({
-    owner: owner,
-    repo: repo
-  });
-  return info;
-};
-
-// Set
-
-const setBranchProtection = async (owner, repo, teams) => {
-  let branches = JSON.parse(core.getInput('branches'));
-  let override = core.getInput('enforce-admins');
-  let approvals = parseInt(core.getInput('min-approvals'));
-  let reqChecks = JSON.parse(core.getInput('required-checks'));
-  branches = branches.map((branch) => {
-    // Below code restricts branch push to certain teams
-    // rather than allowing restriction bypass
-    let bypass = {users: [], teams: []};
-    for (let team of teams) {
-        let name = Object.keys(team)[0];
-        if (Object.values(team)[0] = 'maintain') {
-            bypass.teams.push(name);
-        }
-    }
-    if(bypass.teams.length === 0) {
-        bypass = {};
-    }
-    let restrictions = null;
-    let checks = reqChecks.length > 0 ? {"strict": true, contexts: reqChecks} : null;
-    return {
-      name: branch,
-      checks: checks,
-      restrictions: restrictions,
-      approvals: approvals,
-      bypass: bypass
-    }
-  });
-  for (let branch of branches) {
-    try {
-        octokit.rest.repos.updateBranchProtection({
-          owner: owner,
-          repo: repo,
-          branch: branch.name,
-          required_status_checks: null,
-          enforce_admins: override == 'true' ? true : null,
-          restrictions: branch.restrictions,
-          required_status_checks: branch.checks,
-          required_pull_request_reviews: {
-            required_approving_review_count: branch.approvals,
-            dismiss_stale_reviews: true,
-            bypass_pull_request_allowances: branch.bypass
-          }
-        });
-    } catch(err) {
-        console.log(`ERROR PROTECTING ${branch}...`);
+// Validate that branches is a non-empty array of strings.
+function validateBranches(branches) {
+  if (!Array.isArray(branches) || branches.length === 0) {
+    throw new Error('Input "branches" must be a non-empty JSON array of branch names');
+  }
+  for (const branch of branches) {
+    if (typeof branch !== 'string' || branch.trim() === '') {
+      throw new Error('Each branch name in "branches" must be a non-empty string');
     }
   }
 }
 
-const setTeamRepoPermissions = async (owner, repo, teams) => {
-  for(let team of teams){
-    octokit.rest.teams.addOrUpdateRepoPermissionsInOrg({
+// Validate required-checks mapping.
+function validateRequiredChecks(checks) {
+  if (typeof checks !== 'object' || checks === null || Array.isArray(checks)) {
+    throw new Error('Input "required-checks" must be a JSON object mapping branch names to arrays of check contexts');
+  }
+  for (const [branch, contexts] of Object.entries(checks)) {
+    if (!Array.isArray(contexts)) {
+      throw new Error(`Required checks for branch "${branch}" must be an array of strings`);
+    }
+    for (const ctx of contexts) {
+      if (typeof ctx !== 'string' || ctx.trim() === '') {
+        throw new Error(`Required check context for branch "${branch}" must be a non-empty string`);
+      }
+    }
+  }
+}
+
+// Validate team-roles mapping.
+function validateTeamRoles(roles) {
+  if (typeof roles !== 'object' || roles === null || Array.isArray(roles)) {
+    throw new Error('Input "team-roles" must be a JSON object mapping team slugs to permission levels');
+  }
+  const validPermissions = ['pull', 'triage', 'push', 'maintain', 'admin'];
+  for (const [team, permission] of Object.entries(roles)) {
+    if (!validPermissions.includes(permission)) {
+      throw new Error(`Invalid permission "${permission}" for team "${team}". Must be one of: ${validPermissions.join(', ')}`);
+    }
+  }
+}
+
+// Determine which teams may bypass pull request requirements.
+function buildBypassAllowances(teams) {
+  const bypass = { users: [], teams: [] };
+  for (const team of teams) {
+    const name = Object.keys(team)[0];
+    const permission = Object.values(team)[0];
+    if (permission === 'maintain' || permission === 'admin') {
+      bypass.teams.push(name);
+    }
+  }
+  if (bypass.teams.length === 0) {
+    return {};
+  }
+  return bypass;
+}
+
+// Build branch protection payload for a single branch.
+function buildBranchProtectionPayload(branch, teams, checks, approvals, enforceAdmins) {
+  const bypass = buildBypassAllowances(teams);
+  const branchChecks = Array.isArray(checks[branch]) && checks[branch].length > 0
+    ? { strict: true, contexts: checks[branch] }
+    : null;
+  return {
+    required_status_checks: branchChecks,
+    enforce_admins: enforceAdmins ? true : null,
+    restrictions: null,
+    required_pull_request_reviews: {
+      required_approving_review_count: approvals,
+      dismiss_stale_reviews: true,
+      bypass_pull_request_allowances: bypass
+    }
+  };
+}
+
+// Apply team role overrides from the team-roles input.
+function applyTeamRoleOverrides(teams, overrides) {
+  return teams.map(team => {
+    const name = Object.keys(team)[0];
+    if (name in overrides) {
+      return { [name]: overrides[name] };
+    }
+    return team;
+  });
+}
+
+// Extract template repository information from repo metadata.
+function getRepoTemplate(info) {
+  if (!info || !info.template_repository) {
+    return null;
+  }
+  const template = info.template_repository;
+  return {
+    owner: template.owner.login,
+    repo: template.name,
+    clone: template.clone_url
+  };
+}
+
+// Octokit client factory.
+function getOctokitClient() {
+  const token = core.getInput('token');
+  if (!token) {
+    throw new Error('Input "token" is required');
+  }
+  return github.getOctokit(token);
+}
+
+// GitHub API helpers.
+async function getTeamNames(octokit, owner, repo) {
+  const { data } = await octokit.rest.repos.listTeams({ owner, repo });
+  return data.map(team => ({ [team.slug]: team.permission }));
+}
+
+async function getRepoInfo(octokit, owner, repo) {
+  return octokit.rest.repos.get({ owner, repo });
+}
+
+async function getBranches(octokit, owner, repo) {
+  const { data } = await octokit.rest.repos.listBranches({ owner, repo, protected: false });
+  return data;
+}
+
+async function getCommits(octokit, owner, repo) {
+  const { data } = await octokit.rest.repos.listCommits({ owner, repo });
+  return data;
+}
+
+async function setTeamRepoPermissions(octokit, owner, repo, teams) {
+  for (const team of teams) {
+    const slug = Object.keys(team)[0];
+    const permission = Object.values(team)[0];
+    core.info(`Setting ${slug} permission to ${permission} on ${owner}/${repo}`);
+    await octokit.rest.teams.addOrUpdateRepoPermissionsInOrg({
       org: owner,
-      team_slug: Object.keys(team)[0],
-      owner: owner,
-      repo: repo,
-      permission: Object.values(team)[0]
+      team_slug: slug,
+      owner,
+      repo,
+      permission
     });
   }
 }
 
-const setGit = async() => {
-  await execRun(`git config --global user.name "github-classroom[bot]"`);
-  await execRun(`git config --global user.email "github-classroom[bot]@users.noreply.github.com"`);
-}
-
-const setRemote = async(template) => {
-  let info = await getBranches(template.owner, template.repo);
-  let branches = info.data;
-  info = await setGit();
-  let response = await execRun(`git remote add template ${template.clone}`);
-  response = await(execRun(`git fetch template`));
-  for (let branch of branches) {
+async function setBranchProtection(octokit, owner, repo, branches, teams, checks, approvals, enforceAdmins) {
+  for (const branch of branches) {
+    const payload = buildBranchProtectionPayload(branch, teams, checks, approvals, enforceAdmins);
+    core.info(`Applying branch protection to ${owner}/${repo}:${branch}`);
+    core.debug(`Protection payload: ${JSON.stringify(payload, null, 2)}`);
     try {
-        response = await execRun(`git checkout -b ${branch.name} template/${branch.name}`)
-        response = await execRun(`git push origin ${branch.name}`);
-        response = await execRun(`git checkout main`);
-    } catch (err)  {
-        console.log(`ERROR SETTING REMOTE FOR ${branch}...`);
+      await octokit.rest.repos.updateBranchProtection({
+        owner,
+        repo,
+        branch,
+        required_status_checks: payload.required_status_checks,
+        enforce_admins: payload.enforce_admins,
+        restrictions: payload.restrictions,
+        required_pull_request_reviews: payload.required_pull_request_reviews
+      });
+    } catch (err) {
+      throw new Error(`Failed to protect branch "${branch}": ${err.message}`);
     }
-  }
-  response = await execRun(`git branch`);
-}
-
-// Runner
-
-const execRun = async(cmd) => {
-  let { stdout, stderr } = await exec(`${cmd}`);
-  return {
-    stdout: stdout,
-    strerr: stderr
   }
 }
 
-const run = async () => {
+async function setGit(name, email) {
+  await execRun(`git config --global user.name "${name}"`);
+  await execRun(`git config --global user.email "${email}"`);
+}
 
-  // Constants
-  const repo = github.context.payload.repository.name;
-  const owner = github.context.payload.repository.owner.login;
+async function branchExists(branch) {
+  try {
+    await execRun(`git rev-parse --verify "refs/heads/${branch}"`);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
-  // Properties
-  const info = await getRepoInfo(owner, repo);
-  const teams = await getTeamNames(owner, repo);
-
-  // Facts
-  const template = await getRepoTemplate(info.data);
-  const commits = await getCommits(owner, repo);
-  const lastAuthor = commits.data[0].author;
-
-  // Check for forced branch protection
-  let force = (core.getInput('force-protect') === 'true');
-
-  // Set protections
-  // TODO: Fix this redundancy? Needed to set repo permissions and to
-  //       update the branch management permissions.
-
-  let overrides = JSON.parse(core.getInput('team-roles'));
-  for(let team of teams){
-    let name = Object.keys(team)[0];
-    let idx = teams.indexOf(team);
-    if(name in overrides) {
-      teams[idx] = {[name]: overrides[name]}
-    }
+async function setRemote(octokit, template) {
+  const branches = await getBranches(octokit, template.owner, template.repo);
+  if (branches.length === 0) {
+    core.info('No unprotected branches found on template; nothing to mirror.');
+    return;
   }
 
-  if (template || force) setTeamRepoPermissions(owner, repo, teams);
-  if (template || force) setBranchProtection(owner, repo, teams);
+  await setGit('github-classroom[bot]', 'github-classroom[bot]@users.noreply.github.com');
+  try {
+    await execRun(`git remote add template ${template.clone}`);
+  } catch (err) {
+    if (err.message && err.message.includes('already exists')) {
+      core.info('Remote "template" already exists; using existing remote.');
+    } else {
+      throw err;
+    }
+  }
+  await execRun(`git fetch template`);
 
-  // If repo has a template and this is the last bot commit
-  if (template && lastAuthor == 'github-classroom[bot]') setRemote(template);
+  for (const branch of branches) {
+    const exists = await branchExists(branch.name);
+    if (exists) {
+      core.warning(`Branch "${branch.name}" already exists locally; skipping template mirror.`);
+      continue;
+    }
+    try {
+      core.info(`Mirroring template branch ${branch.name}`);
+      await execRun(`git checkout -b ${branch.name} template/${branch.name}`);
+      await execRun(`git push origin ${branch.name}`);
+      await execRun(`git checkout main`);
+    } catch (err) {
+      throw new Error(`Failed to mirror template branch "${branch.name}": ${err.message}`);
+    }
+  }
+}
 
-  // If repo is not a template and not an assignment
-  if (!template && lastAuthor != 'github-classroom[bot]' && !force) console.log("MAIN TEMPLATE: No action taken.");
+async function execRun(cmd) {
+  core.debug(`Running: ${cmd}`);
+  const { stdout, stderr } = await execAsync(cmd);
+  return { stdout, stderr };
+}
 
+async function run() {
+  try {
+    const octokit = getOctokitClient();
+
+    const repo = github.context.payload.repository.name;
+    const owner = github.context.payload.repository.owner.login;
+
+    core.info(`Running Arborist on ${owner}/${repo}`);
+
+    const branches = parseJsonInput('branches', core.getInput('branches'));
+    validateBranches(branches);
+
+    const checks = parseJsonInput('required-checks', core.getInput('required-checks'), {});
+    validateRequiredChecks(checks);
+
+    const teamRoles = parseJsonInput('team-roles', core.getInput('team-roles'), {});
+    validateTeamRoles(teamRoles);
+
+    const approvals = parseInt(core.getInput('min-approvals'), 10);
+    if (Number.isNaN(approvals) || approvals < 0) {
+      throw new Error('Input "min-approvals" must be a non-negative integer');
+    }
+
+    const enforceAdmins = core.getInput('enforce-admins') === 'true';
+    const forceProtect = core.getInput('force-protect') === 'true';
+
+    const info = await getRepoInfo(octokit, owner, repo);
+    const teams = await getTeamNames(octokit, owner, repo);
+    const template = getRepoTemplate(info.data);
+    const commits = await getCommits(octokit, owner, repo);
+
+    const lastCommit = commits[0];
+    const lastAuthorLogin = lastCommit && lastCommit.author ? lastCommit.author.login : null;
+
+    const effectiveTeams = applyTeamRoleOverrides(teams, teamRoles);
+
+    if (template || forceProtect) {
+      await setTeamRepoPermissions(octokit, owner, repo, effectiveTeams);
+      await setBranchProtection(octokit, owner, repo, branches, effectiveTeams, checks, approvals, enforceAdmins);
+    }
+
+    if (template && lastAuthorLogin === 'github-classroom[bot]') {
+      await setRemote(octokit, template);
+    }
+
+    if (!template && lastAuthorLogin !== 'github-classroom[bot]' && !forceProtect) {
+      core.info('No template repository detected and last commit was not from github-classroom[bot]; no action taken.');
+    }
+  } catch (err) {
+    core.setFailed(err.message);
+  }
+}
+
+if (require.main === module) {
+  run();
+}
+
+module.exports = {
+  parseJsonInput,
+  validateBranches,
+  validateRequiredChecks,
+  validateTeamRoles,
+  buildBypassAllowances,
+  buildBranchProtectionPayload,
+  applyTeamRoleOverrides,
+  getRepoTemplate
 };
-
-run();

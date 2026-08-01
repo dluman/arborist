@@ -1,35 +1,38 @@
 name: 'Arborist'
-description: 'Branch protection and reconstruction for GitHub Classroom assignments'
+description: 'Programmatic branch protection for GitHub repositories'
 inputs:
+  token:
+    description: 'GitHub token with repository administration and branch protection permissions'
+    required: true
   branches:
-    description: 'Branches to protect provided as an array'
+    description: 'Branches to protect provided as a JSON array'
     required: true
     default: '["main", "feedback"]'
   required-checks:
-    description: 'Key-value pairs of branches and checks required for merging'
+    description: 'JSON mapping of branch names to required status check contexts, e.g. {"main": ["ci/test"]}'
     required: false
-    default : '{}'
+    default: '{}'
     type: string
   min-approvals:
-    description: 'Minimum number of approvals for branches'
+    description: 'Minimum number of approving reviews required for protected branches'
     required: true
     default: 1
     type: number
   team-roles:
-    description: 'Key-value pairs of teams and applicable repository roles'
+    description: 'JSON mapping of team slugs to repository permission levels, e.g. {"staff": "maintain"}'
     required: false
     default: '{}'
     type: string
   enforce-admins:
-    description: 'Allows named accounts to bypass the branch protection'
+    description: 'Require status checks to pass before merging even for administrators'
     required: true
     default: false
     type: boolean
   force-protect:
-    description: 'Forces branch protection regardless of assignment/template status'
+    description: 'Force branch protection regardless of template/assignment status'
     required: false
     default: false
     type: boolean
 runs:
-  using: 'node20'
+  using: 'node22'
   main: 'dist/index.js'
